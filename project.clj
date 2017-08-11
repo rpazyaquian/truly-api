@@ -4,7 +4,9 @@
   :min-lein-version "2.0.0"
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [compojure "1.5.1"]
-                 [ring/ring-defaults "0.2.1"]]
+                 [ring/ring-defaults "0.2.1"]
+                 [ragtime "0.7.1"]
+                 [korma "0.4.3"]]
   :plugins [[lein-ring "0.9.7"]]
   :ring {:handler truly-api.handler/app}
   :profiles
