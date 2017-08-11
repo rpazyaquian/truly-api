@@ -4,8 +4,9 @@
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]))
 
 (defroutes app-routes
-  (GET "/" [] "Hello World")
-  (route/not-found "Not Found"))
+  (GET "/query" [] "Query for numbers as JSON goes here")
+  (POST "/number" [] "POST for numbers goes here")
+  (route/not-found "Hello World"))
 
 (def app
   (wrap-defaults app-routes site-defaults))
