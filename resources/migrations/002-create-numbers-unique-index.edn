@@ -1,0 +1,2 @@
+{:up ["CREATE INDEX numbers_unique ON numbers (name, number, context);"]
+ :down ["DROP INDEX numbers_unique;"]}
