@@ -3,12 +3,14 @@
   :url "http://example.com/FIXME"
   :min-lein-version "2.0.0"
   :dependencies [[org.clojure/clojure "1.8.0"]
+                 [org.clojure/tools.cli "0.3.5"]
                  [compojure "1.5.1"]
+                 [ring/ring-core "1.6.2"]
+                 [ring/ring-jetty-adapter "1.6.2"]
                  [ring/ring-defaults "0.2.1"]
-                 [ragtime "0.7.1"]
                  [korma "0.4.3"]]
-  :plugins [[lein-ring "0.9.7"]]
-  :ring {:handler truly-api.handler/app}
+  :plugins [[lein-ring "0.12.0"]]
+  :main truly-api.core
   :profiles
   {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]
                         [ring/ring-mock "0.3.0"]]}})
