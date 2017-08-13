@@ -2,20 +2,11 @@
   (:require [compojure.core :refer :all]
             [compojure.route :as route]
             [clojure.data.csv :as csv]
+            [clojure.data.json :as json]
             [clojure.java.io :as io]
             [ring.middleware.defaults :refer [wrap-defaults api-defaults]]))
 
 (def db (atom {}))
-
-; data structure looks like this:
-
-; {:numbers {"+11111111111" {"context whee" "Rebecca"
-;                            "Other Context Whee" "whee"}}}
-
-; i could do some checks before inserting a new piece of data to ensure
-; <number, context> uniqueness, but is that efficient?
-
-; (swap! db update-in [:numbers] entry)
 
 (defn update-numbers [db entry]
   (let [[number context name] entry]
@@ -33,8 +24,20 @@
     :error
     (update-numbers db entry)))
 
+(defn expand-result [number [context name]]
+  {:number number
+   :name name
+   :context context})
+
+(defn render-results [number results]
+  (let [expanded-results (map #(expand-result number %1) results)
+        json-results (json/write-str {:results expanded-results})]
+    (println json-results)
+    json-results))
+
 (defn get-number [db number]
-  (get-in @db [number]))
+  (let [results (get-in @db [number])]
+    (render-results number results)))
 
 (defn only-digits [number]
   (clojure.string/replace number #"\D" ""))
