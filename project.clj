@@ -10,7 +10,7 @@
                  [ring/ring-core "1.6.2"]
                  [ring/ring-jetty-adapter "1.6.2"]
                  [ring/ring-defaults "0.2.1"]
-                 [korma "0.4.3"]]
+                 [ring/ring-json "0.4.0"]]
   :plugins [[lein-ring "0.12.0"]]
   :main truly-api.core
   :profiles

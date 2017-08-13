@@ -4,7 +4,8 @@
             [clojure.data.csv :as csv]
             [clojure.data.json :as json]
             [clojure.java.io :as io]
-            [ring.middleware.defaults :refer [wrap-defaults api-defaults]]))
+            [ring.middleware.defaults :refer [wrap-defaults api-defaults]]
+            [ring.middleware.json :refer [wrap-json-params]]))
 
 (def db (atom {}))
 
@@ -21,8 +22,25 @@
 
 (defn add-number [db entry]
   (if (number-context-exists? db entry)
-    :error
+    {:status 403}
     (update-numbers db entry)))
+
+(defn proper?
+  "does the data have all the necessary fields, and are they populated?"
+  [data]
+  (let [all-expected-keys? (map #(contains? data %1) ["number" "context" "name"])]
+    (every? identity all-expected-keys?)))
+
+(defn normalize-input-data [data]
+  ; expected: array of [number context name]
+  [(get data "number") (get data "context") (get data "name")])
+
+(defn api-add-number
+  "utility for parsing json, ensuring proper fields, etc"
+  [db data]
+  (if (proper? data)
+    (add-number db (normalize-input-data data))
+    {:status 400}))
 
 (defn expand-result [number [context name]]
   {:number number
@@ -32,12 +50,14 @@
 (defn render-results [number results]
   (let [expanded-results (map #(expand-result number %1) results)
         json-results (json/write-str {:results expanded-results})]
-    (println json-results)
     json-results))
 
 (defn get-number [db number]
   (let [results (get-in @db [number])]
     (render-results number results)))
+
+(defn api-get-number [db number]
+  (get-number db number))
 
 (defn only-digits [number]
   (clojure.string/replace number #"\D" ""))
@@ -65,12 +85,10 @@
            (map #(format-number %1))
            (map #(add-number db %1))))))
 
-(load-csv db "resources/interview-callerid-data.csv")
-
 (defroutes app-routes
-  (GET "/query" [number] (get-number db number))
-  (POST "/number" [data] (if (= :error (add-number db data)) 403 "yay"))
+  (GET "/query" [number] (api-get-number db number))
+  (POST "/number" data (api-add-number db (into {} (:json-params data))))
   (route/not-found "Hello World"))
 
 (def app
-  (wrap-defaults app-routes api-defaults))
+  (wrap-json-params (wrap-defaults app-routes api-defaults)))
