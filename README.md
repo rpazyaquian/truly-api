@@ -25,5 +25,5 @@ To build the project, run `lein uberjar`.
 
 `lein uberjar` will output a jar that you can run on your machine and use locally. The port and the CSV seed data can be specified when running the jar, e.g.:
 
-    `lein uberjar
-    java -jar target/truly-api-0.1.0-SNAPSHOT-standalone.jar -p 3333 -f caller-data.csv`
+    lein uberjar
+    java -jar target/truly-api-0.1.0-SNAPSHOT-standalone.jar -p 3333 -f caller-data.csv
